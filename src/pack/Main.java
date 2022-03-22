@@ -18,28 +18,42 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        File file = new File("D:\\ULE\\3º\\SI\\datos_3_alf.txt");
+        File file = new File("D:\\Alberto GM\\ULE\\3º\\SI\\datos_alf.txt");
         int[] total = new int[1];
 
-        /** ALFABETO */
+        /** ALFABETO, CODIFICAR */
         ArrayList<Alfabeto> lista = generarLista(file,total);
         int lon_min = (int) Math.ceil((Math.log(total[0]) / Math.log(2)));
         String listaBinaria = getCodificacionBinaria(lista,lon_min);
 
+        /** MATRIZ GENERADORA */
+        int[][] matriz = {{1,1,0},{1,0,1},{0,1,1}};
+        int mSize = matriz.length;
+        int[][] matrizG = generarMatrizG(matriz, "izquierda");
 
+        /** CODIFICACION LINEAL */
+        String msgCodificado = getMensajeCodificado(listaBinaria,matrizG);
+    }
 
-        /** NUMERO A MENSAJE */
+    private static String getMensajeCodificado(String lista, int[][] matriz){
+        String cod = "";
+        int len = matriz.length;
+        int i=0;
 
-        /** INFO DE LA FUENTE EXTRA */
-        /*for(int i=0; i<lista.size(); i++){
-            System.out.print(lista.get(i).getChar() + " - ");
-            System.out.println(lista.get(i).getL() + " , " + lista.get(i).getH());
-        }*/
+        while(i+len<=lista.length()){
+            String sub = lista.substring(i,(i+len-1));
+            String add = multiplyBinary(sub,matriz);
+            cod = cod+add;
+            i+=len;
+        }
 
-        /*for(int i=0; i<lista.size(); i++){
-            System.out.print(i+1 + " - ");
-            System.out.println(lista.get(i).imprimir());
-        }*/
+        if(i<lista.length()){
+            String sub = lista.substring(i);
+            cod = cod+sub;
+        }
+
+        return cod;
+
     }
 
     private static ArrayList<Alfabeto> generarLista(File file, int[] totalArray) throws FileNotFoundException {
@@ -90,22 +104,74 @@ public class Main {
         return lista;
     }
 
+    static private int[][] generarMatrizG(int[][] matriz, String pos){
+        int size = matriz.length;
+        int sizeG = size*2;
+        int[][] matrizG = new int[size][sizeG];
+
+        if(pos=="izquierda"){
+            for(int i=0; i<size; i++){
+                for(int x=0; x<size; x++){
+                    if(x==i){
+                        matrizG[i][x] = 1;
+                    }else{
+                        matrizG[i][x] = 0;
+                    }
+                }
+            }
+            for(int i=0; i<size; i++){
+                for(int x=size; x<sizeG; x++){
+                    matrizG[i][x] = matriz[i][x-size];
+                }
+            }
+        }
+
+        if(pos=="derecha"){
+            for(int i=0; i<size; i++){
+                for(int x=0; x<size; x++){
+                    matrizG[i][x] = matriz[i][x];
+                }
+            }
+            for(int i=0; i<size; i++) {
+                for (int x = size; x < sizeG; x++) {
+                    if ((x-size) == i) {
+                        matrizG[i][x] = 1;
+                    } else {
+                        matrizG[i][x] = 0;
+                    }
+                }
+            }
+        }
+
+        return matrizG;
+    }
+
+    private static String multiplyBinary(String sub, int[][] matriz){
+        String out = "";
+        int[] fila = new int[matriz.length];
+
+        for(int i=0; i<sub.length(); i++){
+            fila[i] = Character.getNumericValue(sub.charAt(i));
+        }
+
+        for(int x=0; x<(matriz.length*2); x++){
+            int sum=0;
+            for(int i=0; i<(matriz.length); i++){
+                sum+= matriz[i][x] * fila[i];
+            }
+            if(sum>1) sum=sum%2;
+            out = out + sum;
+        }
+
+        return out;
+    }
+
     private static int checkExist(ArrayList<Alfabeto> list, char c){
         for(int i=0; i<list.size(); i++){
             if(list.get(i).getChar()==c){ return i; }
         }
 
         return -1;
-    }
-
-    private static double calcularEntropia(ArrayList<Alfabeto> list){
-        double ent = 0.0;
-        for(int i=0; i<list.size(); i++){
-            double prob = list.get(i).getProbabilidad();
-            double log = (Math.log(1/prob) / Math.log(2));
-            ent+= (prob * log);
-        }
-        return redondearDecimal(ent,5);
     }
 
     private static void cambioDeLinea(ArrayList<Alfabeto> list){
