@@ -33,6 +33,13 @@ public class Main {
 
         /** CODIFICACION LINEAL */
         String msgCodificado = getMensajeCodificado(listaBinaria,matrizG);
+
+        /** DESCODIFICAR MENSAJE */
+        File file2 = new File("D:\\Alberto GM\\ULE\\3º\\SI\\datos.txt");
+        String secuencia = getSecuencia(file2);
+        String listaBinariaDes = getListaBinaria(secuencia,mSize,"izquierda");
+        String message = descodifyMessage(lista, listaBinariaDes, lon_min);
+        System.out.println(message);
     }
 
     private static String getMensajeCodificado(String lista, int[][] matriz){
@@ -41,7 +48,7 @@ public class Main {
         int i=0;
 
         while(i+len<=lista.length()){
-            String sub = lista.substring(i,(i+len-1));
+            String sub = lista.substring(i,(i+len));
             String add = multiplyBinary(sub,matriz);
             cod = cod+add;
             i+=len;
@@ -90,6 +97,80 @@ public class Main {
         totalArray[0] = total;
 
         return lista;
+    }
+
+    static private String getSecuencia(File file) throws FileNotFoundException {
+        Scanner sc = new Scanner(file);
+        String out = "";
+
+        while (true) {
+            String nxt = sc.nextLine();
+            for(int i=0; i<nxt.length(); i++){
+                char c = nxt.charAt(i);
+                if(c=='1' || c=='0'){
+                    out = out + c;
+                }
+            }
+
+            if(!sc.hasNextLine()){
+                break;
+            }
+        }
+
+        return out;
+    }
+
+    static private String descodifyMessage(ArrayList<Alfabeto> listaAlf, String binary, int len){
+        String msg = "";
+        int i=0;
+
+        while(i+len<=binary.length()){
+            String sub = binary.substring(i,(i+len));
+            char c = ' ';
+            for(int x=0; x<listaAlf.size(); x++){
+                if(listaAlf.get(x).getCod().equals(sub)){
+                    c = listaAlf.get(x).getChar();
+                }
+            }
+            msg=msg+c;
+            i+=len;
+        }
+
+        return msg;
+    }
+
+    static private String getListaBinaria(String secuencia, int size, String pos){
+        String out = "";
+        int i=0;
+
+        if(pos=="izquierda") {
+            while (i + size <= secuencia.length()) {
+                String sub = secuencia.substring(i, (i + size));
+                out = out + sub;
+                i += (size * 2);
+            }
+
+            if (i < secuencia.length()) {
+                String sub = secuencia.substring(i);
+                out = out + sub;
+            }
+        }
+
+        if(pos=="derecha") {
+            i=size-1;
+            while (i + size <= secuencia.length()) {
+                String sub = secuencia.substring(i, (i + size));
+                out = out + sub;
+                i += (size * 2);
+            }
+
+            if (i < secuencia.length()) {
+                String sub = secuencia.substring(i);
+                out = out + sub;
+            }
+        }
+
+        return out;
     }
 
     static private String getCodificacionBinaria(ArrayList<Alfabeto> list, int lon){
