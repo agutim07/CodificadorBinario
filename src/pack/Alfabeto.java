@@ -6,8 +6,8 @@ public class Alfabeto {
     private char caracter;
     private int frecuencia;
     private double probabilidad;
-    private BigDecimal L;
-    private BigDecimal H;
+    private int pos;
+    private String cod;
 
     Alfabeto(char c){
         this.frecuencia=1;
@@ -24,9 +24,17 @@ public class Alfabeto {
     public void setProbabilidad(int total){ this.probabilidad = (double) frecuencia/total; }
     public double getProbabilidad(){ return this.probabilidad; }
 
-    public void setLH(BigDecimal L, BigDecimal H) {this.L = L; this.H = H;}
-    public BigDecimal getL(){return L;}
-    public BigDecimal getH(){return H;}
+    public void setPosicion(int posicion){ this.pos = posicion; }
+    public void setCod(int lon){
+        String cod = Integer.toBinaryString(pos-1);
+        int len = cod.length();
+        for(int i=len; i<lon; i++){
+            cod = "0"+cod;
+        }
+        this.cod=cod;
+    }
+
+    public String getCod(){ return this.cod; }
 
     public String imprimir(){
         String data;

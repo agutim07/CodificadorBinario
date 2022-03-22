@@ -19,14 +19,14 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
 
         File file = new File("D:\\ULE\\3º\\SI\\datos_3_alf.txt");
-        int[] totalArray = new int[1];
+        int[] total = new int[1];
 
-        /** FUENTE DE INFORMACIÓN */
-        ArrayList<Alfabeto> lista = generarLista(file,totalArray);
-        int total = totalArray[0];
-        System.out.println(total);
-        double lon_min = (Math.log(total) / Math.log(2));
-        System.out.println(lon_min);
+        /** ALFABETO */
+        ArrayList<Alfabeto> lista = generarLista(file,total);
+        int lon_min = (int) Math.ceil((Math.log(total[0]) / Math.log(2)));
+        String listaBinaria = getCodificacionBinaria(lista,lon_min);
+
+
 
         /** NUMERO A MENSAJE */
 
@@ -42,7 +42,7 @@ public class Main {
         }*/
     }
 
-    private static ArrayList<Alfabeto> generarLista(File file, int[] totalOut) throws FileNotFoundException {
+    private static ArrayList<Alfabeto> generarLista(File file, int[] totalArray) throws FileNotFoundException {
         Scanner sc = new Scanner(file);
         ArrayList<Alfabeto> lista = new ArrayList<Alfabeto>();
         int total=0;
@@ -73,7 +73,19 @@ public class Main {
             lista.get(i).setProbabilidad(total);
         }
 
-        totalOut[0] = total;
+        totalArray[0] = total;
+
+        return lista;
+    }
+
+    static private String getCodificacionBinaria(ArrayList<Alfabeto> list, int lon){
+        String lista = "";
+
+        for(int i=0; i<list.size(); i++){
+            list.get(i).setPosicion(i+1);
+            list.get(i).setCod(lon);
+            lista = lista + list.get(i).getCod();
+        }
 
         return lista;
     }
