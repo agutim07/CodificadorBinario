@@ -66,7 +66,7 @@ public class Main {
     private static ArrayList<Alfabeto> generarLista(File file, int[] totalArray) throws FileNotFoundException {
         Scanner sc = new Scanner(file);
         ArrayList<Alfabeto> lista = new ArrayList<Alfabeto>();
-        int total=0;
+        int total=0, totalSimbolos=0;
 
         while (true) {
             String nxt = sc.nextLine();
@@ -76,6 +76,7 @@ public class Main {
                 if(x==-1){
                     Alfabeto newletter = new Alfabeto(c);
                     lista.add(newletter);
+                    totalSimbolos++;
                 }else{
                     lista.get(x).aumentarFrecuencia();
                 }
@@ -94,7 +95,7 @@ public class Main {
             lista.get(i).setProbabilidad(total);
         }
 
-        totalArray[0] = total;
+        totalArray[0] = totalSimbolos;
 
         return lista;
     }
